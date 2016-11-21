@@ -10,6 +10,10 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.view.MotionEvent;
 
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.util.TypedValue;
+
 /**
  * Created by Nyxot on 21/11/2016.
  */
@@ -26,6 +30,9 @@ public class DrawingView extends View {
     private Canvas drawCanvas;
     //canvas bitmap
     private Bitmap canvasBitmap;
+
+    private float brushSize, lastBrushSize;
+    private boolean erase = false;
 
     public DrawingView(Context context, AttributeSet attrs)
     {
@@ -46,6 +53,11 @@ public class DrawingView extends View {
         drawPaint.setStrokeCap(Paint.Cap.ROUND);
 
         canvasPaint = new Paint(Paint.DITHER_FLAG);
+
+        //change size brush
+        brushSize = getResources().getInteger(R.integer.medium_size);
+        lastBrushSize = brushSize;
+        drawPaint.setStrokeWidth(brushSize);
     }
 
     @Override
@@ -92,5 +104,42 @@ public class DrawingView extends View {
         invalidate();
         paintColor = Color.parseColor(newColor);
         drawPaint.setColor(paintColor);
+    }
+
+    public void setBrushSize(float newsize)
+    {
+        //update size
+        float pixelAmount = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, newsize, getResources().getDisplayMetrics());
+        brushSize = pixelAmount;
+        drawPaint.setStrokeWidth(brushSize);
+    }
+
+    public void setLastBrushSize(float lastsize)
+    {
+        lastBrushSize = lastsize;
+    }
+
+    public float getLastBrushSize()
+    {
+        return lastBrushSize;
+    }
+
+    public void setErase(boolean isErase)
+    {
+        //set erase true or false
+        erase = isErase;
+        if(erase)
+        {
+            drawPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+        }else
+        {
+            drawPaint.setXfermode(null);
+        }
+    }
+
+    public void startNew()
+    {
+        drawCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
+        invalidate();
     }
 }
