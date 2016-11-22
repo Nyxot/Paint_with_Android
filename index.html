@@ -36,8 +36,1077 @@
         <span class="blc"></span><span class="trc"></span>
         </div>
         <article class="markdown-body">
-          <h3>
-<a id="paint-with-android" class="anchor" href="#paint-with-android" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Paint with Android</h3>
+		<!--aqui esta el body del articulo -->
+			<h3>
+				<a id="paint-with-android" class="anchor" href="#paint-with-android" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Paint with Android
+			</h3>
+			<h2>
+<h1 style="color: blue; font-size: 40px;">Interface creation</h1>
+
+<h2><span>1.</span> Create an Android Project</h2>
+<h3>Step 1</h3>
+<p>
+Start a new Android project in Android Studio, choosing application and package names. We are using a minimum API level of 15 for the code in this tutorial.</p>
+<figure class="tutorial_image">
+<img src="images/nuevo_proyecto1.PNG" alt="Drawing Project"><br>
+<img src="images/nuevo_proyecto2.PNG" alt="Drawing Project"><br>
+</figure>
+<p>
+Let Android Studio create a blank main Activity and layout - you can use the default names.</p>
+<figure class="tutorial_image">
+<img src="images/nuevo_proyecto3.PNG" alt="Drawing Class and Layout"><br>
+</figure>
+<h3>Step 2</h3>
+<p>
+Open your project Manifest file and switch to the XML editing tab. Your Activity and SDK levels should already be set. Add the following to your Activity element opening tag, forcing the app only to use portrait:</p>
+<pre class="brush: xml noskimlinks noskimwords">
+android:screenOrientation="portrait"</pre>
+<h3>Step 3</h3>
+<p>
+Before we start building the interface, let's define some numbers we will use throughout the series. In your app's "res/values" folder, if Eclipse has not already created it, add the "dimens.xml" file - if it is already there you can simply add new values to it. The outline should be as follows:</p>
+<pre class="brush: xml noskimlinks noskimwords">
+&lt;resources&gt;
+&lt;/resources&gt;</pre>
+<p>
+If Eclipse created the file, there may be some values in it already. We are going to use three possible brush/eraser sizes: small, medium, and large. We need to define the size for each as both a dimension and an integer value so that we can use these measurements in both the XML layout and drawable resources and the Java code:</p>
+<pre class="brush: xml noskimlinks noskimwords">
+&lt;!-- Brush sizes --&gt;
+&lt;dimen name="small_brush"&gt;10dp&lt;/dimen&gt;
+&lt;integer name="small_size"&gt;10&lt;/integer&gt;
+&lt;dimen name="medium_brush"&gt;20dp&lt;/dimen&gt;
+&lt;integer name="medium_size"&gt;20&lt;/integer&gt;
+&lt;dimen name="large_brush"&gt;30dp&lt;/dimen&gt;
+&lt;integer name="large_size"&gt;30&lt;/integer&gt;</pre>
+<p>
+The values for dimension and integer at each size are the same, so that the UI indicates the brush size as it will function when the user draws with it.</p>
+<hr>
+<h2>
+<span>2.</span> Create a Custom View Class</h2>
+<h3>Step 1</h3>
+<p>
+We are going to define a custom View class in which the drawing will take place. In your app's source package, create a new class. Name it "DrawingView" and select "android.view.View" as the Superclass. The new class should have the following outline:</p>
+<pre class="brush: java noskimlinks noskimwords">
+public class DrawingView extends View
+{
+
+}</pre>
+<h3>Step 2</h3>
+<p>
+In your new View class you will need the following import statements in addition to the View import which Eclipse should have added for you:</p>
+<pre class="brush: java noskimlinks noskimwords">
+import android.content.Context;
+import android.util.AttributeSet;</pre>
+<p>
+Add a constructor method to the class:</p>
+<pre class="brush: java noskimlinks noskimwords">
+public DrawingView(Context context, AttributeSet attrs){
+	super(context, attrs);
+	setupDrawing();
+}</pre>
+<p>
+We will add an instance of the custom View to the XML layout file. Add the specified helper method to the class:</p>
+<pre class="brush: java noskimlinks noskimwords">
+private void setupDrawing(){
+//get drawing area setup for interaction		
+}</pre>
+<p>
+We will implement this method in the next part of the series, as well as adding other methods to the class.</p>
+<hr>
+<h2>
+<span>3.</span> Design the Activity Layout</h2>
+<h3>Step 1</h3>
+<p>
+Open your app's "res/values" strings XML file and add some text strings we will use in the layout:</p>
+<pre class="brush: xml noskimlinks noskimwords">
+&lt;string name="start_new"&gt;New&lt;/string&gt;
+&lt;string name="brush"&gt;Brush&lt;/string&gt;
+&lt;string name="erase"&gt;Erase&lt;/string&gt;
+&lt;string name="save"&gt;Save&lt;/string&gt;
+&lt;string name="paint"&gt;Paint&lt;/string&gt;</pre>
+<p>
+Open the app's main layout file and switch to the XML tab to edit the code. The Activity screen content will be easiest to implement using Linear Layouts. Replace the content of the layout file with the following outline:</p>
+<pre class="brush: xml noskimlinks noskimwords">
+&lt;LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:background="#FFCCCCCC"
+	android:orientation="vertical"
+	tools:context=".MainActivity" &gt;
+
+&lt;/LinearLayout&gt;</pre>
+<p>
+We set vertical orientation and a gray background color.</p>
+<h3>Step 2</h3>
+<p>
+Inside the main Linear Layout, add another to hold the UI buttons along the top of the screen:</p>
+<pre class="brush: xml noskimlinks noskimwords">
+&lt;LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="50dp"
+    android:layout_gravity="center"
+    android:orientation="horizontal" &gt;
+&lt;/LinearLayout&gt;</pre>
+<p>
+This time the layout is horizontal with a set height and centering applied. Inside this layout we will add the buttons for starting a new drawing, selecting a brush, selecting an eraser, and saving a drawing. We are using the following images for these buttons, although you can create your own if you prefer:</p>
+<figure class="tutorial_image">
+    <img src="https://cdn.tutsplus.com/mobile/uploads/2013/08/new_pic.png" data-original-url="http://cdn.tutsplus.com/mobile.tutsplus.com/uploads/2013/08/new_pic.png" alt="New Button"><br>
+    <img src="https://cdn.tutsplus.com/mobile/uploads/2013/08/brush.png" data-original-url="http://cdn.tutsplus.com/mobile.tutsplus.com/uploads/2013/08/brush.png" alt="Brush Button"><br>
+    <img src="https://cdn.tutsplus.com/mobile/uploads/2013/08/eraser.png" data-original-url="http://cdn.tutsplus.com/mobile.tutsplus.com/uploads/2013/08/eraser.png" alt="Eraser Button"><br>
+    <img src="https://cdn.tutsplus.com/mobile/uploads/2013/08/save.png" data-original-url="http://cdn.tutsplus.com/mobile.tutsplus.com/uploads/2013/08/save.png" alt="Save Button"><br>
+</figure>
+<p>
+Copy the images to your app's drawable folder(s) - if you are creating your own you can target particular densities. To complete the tutorial series without targeting particular screen densities you can simply create a folder named "drawable" and add all of your drawable resources to it.</p>
+<p>
+Let's now add an <em>ImageButton</em> for each option in the Activity. Start with the button to create a new drawing inside the second Linear Layout:</p>
+<pre class="brush: xml noskimlinks noskimwords">
+&lt;ImageButton
+    android:id="@+id/new_btn"
+    android:layout_width="wrap_content"
+    android:layout_height="fill_parent"
+    android:contentDescription="@string/start_new"
+    android:src="@drawable/new_pic" /&gt;</pre>
+<p>
+We will use the ID to respond to button clicks in the Activity class. We specify the new button icon image as source for the <em>ImageButton</em> and add a content description string.</p>
+<p>
+Next add the brush button:</p>
+<pre class="brush: xml noskimlinks noskimwords">
+&lt;ImageButton
+	android:id="@+id/draw_btn"
+	android:layout_width="wrap_content"
+	android:layout_height="fill_parent"
+	android:contentDescription="@string/brush"
+	android:src="@drawable/brush" /&gt;</pre>
+<p>
+Now add the eraser button:</p>
+<pre class="brush: xml noskimlinks noskimwords">
+&lt;ImageButton
+	android:id="@+id/erase_btn"
+	android:layout_width="wrap_content"
+	android:layout_height="fill_parent"
+	android:contentDescription="@string/erase"
+	android:src="@drawable/eraser" /&gt;</pre>
+<p>
+On clicking either the brush or eraser button, the user will be prompted to select a size - we will implement this later. Next add the save button:</p>
+<pre class="brush: xml noskimlinks noskimwords">
+&lt;ImageButton
+	android:id="@+id/save_btn"
+	android:layout_width="wrap_content"
+	android:layout_height="fill_parent"
+	android:contentDescription="@string/save"
+	android:src="@drawable/save" /&gt;</pre>
+<p>
+That's it for the top Linear Layout control buttons.</p>
+<h3>Step 3</h3>
+<p>
+After the top button Linear Layout, but still inside the outer Linear Layout in the file, let's now add an instance of the custom view class we created:</p>
+<pre class="brush: xml noskimlinks noskimwords">
+&lt;com.example.drawingfun.DrawingView
+	android:id="@+id/drawing"
+	android:layout_width="fill_parent"
+	android:layout_height="0dp"
+	android:layout_marginBottom="3dp"
+	android:layout_marginLeft="5dp"
+	android:layout_marginRight="5dp"
+	android:layout_marginTop="3dp"
+	android:layout_weight="1"
+	android:background="#FFFFFFFF" /&gt;</pre>
+<p>
+As you can see, you can add a custom View to your layouts in much the same way as the standard Android UI elements. We set general layout properties, a white background for drawing, and provide an ID for referencing the View in Java. By retrieving a reference to this instance of the custom View class, our Activity will be able to access the methods we define in the View class declaration we created.</p>
+<h3>Step 4</h3>
+<p>
+Now let's add the color palette. After the custom View element, add another Linear Layout for the palette buttons:</p>
+<pre class="brush: xml noskimlinks noskimwords">
+&lt;LinearLayout
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:layout_gravity="center"
+	android:orientation="vertical" &gt;
+&lt;/LinearLayout&gt;</pre>
+<p>
+This element will contain two rows of buttons so enter two more Linear Layouts for these. Place the following inside the one you just added:</p>
+<pre class="brush: xml noskimlinks noskimwords">
+&lt;!-- Top Row --&gt;
+&lt;LinearLayout
+	android:id="@+id/paint_colors"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:orientation="horizontal" &gt;
+&lt;/LinearLayout&gt;
+&lt;!-- Bottom Row --&gt;
+&lt;LinearLayout
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:orientation="horizontal" &gt;
+&lt;/LinearLayout&gt;</pre>
+<p>
+The first row has an ID because we are going to use it in Java when the app starts to set the first default color as selected so that the user can start drawing straight away. For each color, we are going to use the following <em>ImageButton</em> structure:</p>
+<pre class="brush: xml noskimlinks noskimwords">
+&lt;ImageButton
+	android:layout_width="@dimen/large_brush"
+	android:layout_height="@dimen/large_brush"
+	android:layout_margin="2dp"
+	android:background="#FF660000"
+	android:contentDescription="@string/paint"
+	android:onClick="paintClicked"
+	android:src="@drawable/paint"
+	android:tag="#FF660000" /&gt;</pre>
+<p>
+Don't add this to your layout file yet - we will do that shortly, for now look over the code. We use one of the dimension values we defined for the color button. Notice that the background and tag attributes are the same - the background is for the appearance of the button in the UI, while the tag is so that we can set the paint color according to what the user has clicked in the Activity Java code. The element includes a method to execute on clicks of the button - we will implement this in the Activity class next time. We also specify a drawable named "paint". Add this to the project now, creating a new file in the project drawable folder(s) and naming it "paint.xml". Enter the following code in the new drawable file:</p>
+<pre class="brush: xml noskimlinks noskimwords">
+&lt;layer-list xmlns:android="http://schemas.android.com/apk/res/android" &gt;
+&lt;item&gt;
+	&lt;shape android:shape="rectangle" &gt;
+		&lt;stroke
+			android:width="4dp"
+			android:color="#FF999999" /&gt;
+		&lt;solid android:color="#00000000" /&gt;
+		&lt;padding
+			android:bottom="0dp"
+			android:left="0dp"
+			android:right="0dp"
+			android:top="0dp" /&gt;
+	&lt;/shape&gt;
+&lt;/item&gt;
+&lt;item&gt;
+	&lt;shape xmlns:android="http://schemas.android.com/apk/res/android" &gt;
+		&lt;stroke
+			android:width="4dp"
+			android:color="#FF999999" /&gt;
+		&lt;solid android:color="#00000000" /&gt;
+		&lt;corners android:radius="10dp" /&gt;
+	&lt;/shape&gt;
+&lt;/item&gt;
+&lt;/layer-list&gt;</pre>
+<p>
+This is less complex than it looks at first glance. To create a rounded button appearance, we use two layered Shape Drawables, one a rectangle outline and the other a rounded stroke. The strokes have a gray color, with transparency in the middle through which the background color for each button will be seen (the background color being the color represented by the button).</p>
+<p>
+Back in the layout file, inside the top row layout in the color palette section, add the following <em>ImageButton</em> elements to represent the first six colors, using the structure we outlined above:</p>
+<pre class="brush: xml noskimlinks noskimwords">
+&lt;ImageButton
+	android:layout_width="@dimen/large_brush"
+	android:layout_height="@dimen/large_brush"
+	android:layout_margin="2dp"
+	android:background="#FF660000"
+	android:contentDescription="@string/paint"
+	android:onClick="paintClicked"
+	android:src="@drawable/paint"
+	android:tag="#FF660000" /&gt;
+
+&lt;ImageButton
+	android:layout_width="@dimen/large_brush"
+	android:layout_height="@dimen/large_brush"
+	android:layout_margin="2dp"
+	android:background="#FFFF0000"
+	android:contentDescription="@string/paint"
+	android:onClick="paintClicked"
+	android:src="@drawable/paint"
+	android:tag="#FFFF0000" /&gt;
+
+&lt;ImageButton
+	android:layout_width="@dimen/large_brush"
+	android:layout_height="@dimen/large_brush"
+	android:layout_margin="2dp"
+	android:background="#FFFF6600"
+	android:contentDescription="@string/paint"
+	android:onClick="paintClicked"
+	android:src="@drawable/paint"
+	android:tag="#FFFF6600" /&gt;
+
+&lt;ImageButton
+	android:layout_width="@dimen/large_brush"
+	android:layout_height="@dimen/large_brush"
+	android:layout_margin="2dp"
+	android:background="#FFFFCC00"
+	android:contentDescription="@string/paint"
+	android:onClick="paintClicked"
+	android:src="@drawable/paint"
+	android:tag="#FFFFCC00" /&gt;
+
+&lt;ImageButton
+	android:layout_width="@dimen/large_brush"
+	android:layout_height="@dimen/large_brush"
+	android:layout_margin="2dp"
+	android:background="#FF009900"
+	android:contentDescription="@string/paint"
+	android:onClick="paintClicked"
+	android:src="@drawable/paint"
+	android:tag="#FF009900" /&gt;
+
+&lt;ImageButton
+	android:layout_width="@dimen/large_brush"
+	android:layout_height="@dimen/large_brush"
+	android:layout_margin="2dp"
+	android:background="#FF009999"
+	android:contentDescription="@string/paint"
+	android:onClick="paintClicked"
+	android:src="@drawable/paint"
+	android:tag="#FF009999" /&gt;</pre>
+<p>
+Each button is identical apart from the colors defined in the background and tag attributes. Add the next six in the bottom row layout:</p>
+<pre class="brush: xml noskimlinks noskimwords">
+&lt;ImageButton
+	android:layout_width="@dimen/large_brush"
+	android:layout_height="@dimen/large_brush"
+	android:layout_margin="2dp"
+	android:background="#FF0000FF"
+	android:contentDescription="@string/paint"
+	android:onClick="paintClicked"
+	android:src="@drawable/paint"
+	android:tag="#FF0000FF" /&gt;
+
+&lt;ImageButton
+	android:layout_width="@dimen/large_brush"
+	android:layout_height="@dimen/large_brush"
+	android:layout_margin="2dp"
+	android:background="#FF990099"
+	android:contentDescription="@string/paint"
+	android:onClick="paintClicked"
+	android:src="@drawable/paint"
+	android:tag="#FF990099" /&gt;
+
+&lt;ImageButton
+	android:layout_width="@dimen/large_brush"
+	android:layout_height="@dimen/large_brush"
+	android:layout_margin="2dp"
+	android:background="#FFFF6666"
+	android:contentDescription="@string/paint"
+	android:onClick="paintClicked"
+	android:src="@drawable/paint"
+	android:tag="#FFFF6666" /&gt;
+
+&lt;ImageButton
+	android:layout_width="@dimen/large_brush"
+	android:layout_height="@dimen/large_brush"
+	android:layout_margin="2dp"
+	android:background="#FFFFFFFF"
+	android:contentDescription="@string/paint"
+	android:onClick="paintClicked"
+	android:src="@drawable/paint"
+	android:tag="#FFFFFFFF" /&gt;
+
+&lt;ImageButton
+	android:layout_width="@dimen/large_brush"
+	android:layout_height="@dimen/large_brush"
+	android:layout_margin="2dp"
+	android:background="#FF787878"
+	android:contentDescription="@string/paint"
+	android:onClick="paintClicked"
+	android:src="@drawable/paint"
+	android:tag="#FF787878" /&gt;
+
+&lt;ImageButton
+	android:layout_width="@dimen/large_brush"
+	android:layout_height="@dimen/large_brush"
+	android:layout_margin="2dp"
+	android:background="#FF000000"
+	android:contentDescription="@string/paint"
+	android:onClick="paintClicked"
+	android:src="@drawable/paint"
+	android:tag="#FF000000" /&gt;</pre>
+<p>
+Change the colors if you like, but make sure you use the same color value in the background and tag attributes for each button. You should now be able to see the layout in the Graphical Layout tab in Eclipse:</p>
+<figure class="tutorial_image">
+<img src="images/interface_terminada.png" alt="Drawing App Design"><br>
+</figure>
+<hr>
+<h1 style="color: blue; font-size: 40px;">Touch interaction</h1>
+<h2><span class="sectionnum">1.</span> Prepare for Drawing</h2>
+<h3>Step 1</h3>
+<p>
+Last time we created a class named "DrawingView" which is a custom View for the drawing functions to take place in. We created the outline of the class declaration and a method named "setupDrawing" - we will implement this now. In your <code>DrawingView</code> class, add the following import statements:</p>
+<pre class="brush: java noskimlinks noskimwords">import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.view.MotionEvent;</pre>
+<p>
+Next add some instance variables at the top of the class:</p>
+<pre class="brush: java noskimlinks noskimwords">//drawing path
+private Path drawPath;
+//drawing and canvas paint
+private Paint drawPaint, canvasPaint;
+//initial color
+private int paintColor = 0xFF660000;
+//canvas
+private Canvas drawCanvas;
+//canvas bitmap
+private Bitmap canvasBitmap;</pre>
+<p>
+When the user touches the screen and moves their finger to draw, we will use a Path to trace their drawing action on the canvas. Both the canvas and the drawing on top of it are represented by Paint objects. The initial paint color corresponds to the first color in the palette we created last time, which will be initially selected when the app launches. Finally we declare variables for the canvas and bitmap - the user paths drawn with <code>drawPaint</code> will be drawn onto the canvas, which is drawn with <code>canvasPaint</code>.</p>
+<h3>Step 2</h3>
+<p>
+In the <code>setupDrawing</code> method, let's instantiate some of these variables now to set the class up for drawing. First instantiate the drawing Path and Paint objects:</p>
+<pre class="brush: java noskimlinks noskimwords">drawPath = new Path();
+drawPaint = new Paint();</pre>
+<p>
+Next set the initial color:</p>
+<pre class="brush: java noskimlinks noskimwords">drawPaint.setColor(paintColor);</pre>
+<p>
+Now set the initial path properties:</p>
+<pre class="brush: java noskimlinks noskimwords">drawPaint.setAntiAlias(true);
+drawPaint.setStrokeWidth(20);
+drawPaint.setStyle(Paint.Style.STROKE);
+drawPaint.setStrokeJoin(Paint.Join.ROUND);
+drawPaint.setStrokeCap(Paint.Cap.ROUND);</pre>
+<p>
+We will alter part of this code in the next tutorial when we implement the ability to choose brush sizes, for now we set an arbitrary brush size. Setting the anti-alias, stroke join and cap styles will make the user's drawings appear smoother.</p>
+<p>
+Complete the <code>setupDrawing</code> method by instantiating the canvas Paint object:</p>
+<pre class="brush: java noskimlinks noskimwords">canvasPaint = new Paint(Paint.DITHER_FLAG);</pre>
+<p>
+This time we set dithering by passing a parameter to the constructor.</p>
+<h3>Step 3</h3>
+<p>
+We need to override a couple of methods to make the custom View function as a drawing View. First, still inside the <code>DrawingView</code> class, override the <code>onSizeChanged</code> method, which will be called when the custom View is assigned a size:</p>
+<pre class="brush: java noskimlinks noskimwords">@Override
+protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+//view given size
+}</pre>
+<p>
+Inside this method, first call the superclass method:</p>
+<pre class="brush: java noskimlinks noskimwords">super.onSizeChanged(w, h, oldw, oldh);</pre>
+<p>
+Now instantiate the drawing canvas and bitmap using the width and height values:</p>
+<pre class="brush: java noskimlinks noskimwords">canvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+drawCanvas = new Canvas(canvasBitmap);</pre>
+<h3>Step 4</h3>
+<p>
+To allow the class to function as a custom drawing View, we also need to override the <code>onDraw</code> method, so add it to the class now:</p>
+<pre class="brush: java noskimlinks noskimwords">@Override
+protected void onDraw(Canvas canvas) {
+//draw view
+}</pre>
+<p>
+Inside the method, draw the canvas and the drawing path:</p>
+<pre class="brush: java noskimlinks noskimwords">canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
+canvas.drawPath(drawPath, drawPaint);</pre>
+<p>
+We have not yet implemented the ability for the user to draw the Path using the drawing Paint, but once we do this will present it in the View. Each time the user draws using touch interaction, we will invalidate the View, causing the <code>onDraw</code> method to execute.</p>
+<hr>
+<h2>
+<span class="sectionnum">2.</span> Facilitate Drawing</h2>
+<h3>Step 1</h3>
+<p>
+When the drawing View is on the app screen, we want user touches on it to register as drawing operations. To do this we need to listen for touch events. In your <code>drawingView</code> class, add the following method:</p>
+<pre class="brush: java noskimlinks noskimwords">@Override
+public boolean onTouchEvent(MotionEvent event) {
+//detect user touch		
+}</pre>
+<p>
+Inside the method, retrieve the X and Y positions of the user touch:</p>
+<pre class="brush: java noskimlinks noskimwords">float touchX = event.getX();
+float touchY = event.getY();</pre>
+<h3>Step 2</h3>
+<p>
+The <code>MotionEvent</code> parameter to the <code>onTouchEvent</code> method will let us respond to particular touch events. The actions we are interested in to implement drawing are <code>down</code>, <code>move</code> and <code>up</code>. Add a switch statement in the method to respond to each of these:</p>
+<pre class="brush: java noskimlinks noskimwords">switch (event.getAction()) {
+case MotionEvent.ACTION_DOWN:
+	drawPath.moveTo(touchX, touchY);
+	break;
+case MotionEvent.ACTION_MOVE:
+	drawPath.lineTo(touchX, touchY);
+	break;
+case MotionEvent.ACTION_UP:
+	drawCanvas.drawPath(drawPath, drawPaint);
+	drawPath.reset();
+	break;
+default:
+	return false;
+}</pre>
+<p>
+Take a moment to look over this code. When the user touches the View, we move to that position to start drawing. When they move their finger on the View, we draw the path along with their touch. When they lift their finger up off the View, we draw the Path and reset it for the next drawing operation.</p>
+<h3>Step 3</h3>
+<p>
+After the switch statement, complete the method by invalidating the View and returning a true value:</p>
+<pre class="brush: java noskimlinks noskimwords">invalidate();
+return true;</pre>
+<p>
+Calling <code>invalidate</code> will cause the <code>onDraw</code> method to execute.</p>
+<hr>
+<h2>
+<span class="sectionnum">3.</span> Choosing Colors</h2>
+<h3>Step 1</h3>
+<p>
+Let's now implement the ability for the user to choose colors from the palette. In the app's main Activity, add the following imports:</p>
+<pre class="brush: java noskimlinks noskimwords">import android.view.View;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;</pre>
+<p>
+Add the following instance variable to the class:</p>
+<pre class="brush: java noskimlinks noskimwords">private DrawingView drawView;</pre>
+<p>
+This represents the instance of the custom View that we added to the layout. Inside <code>onCreate</code>, after the existing code, instantiate this variable by retrieving a reference to it from the layout:</p>
+<pre class="brush: java noskimlinks noskimwords">drawView = (DrawingView)findViewById(R.id.drawing);</pre>
+<p>
+We now have the View that is displayed in the Activity on which we can call the methods in the <code>DrawingView</code> class.</p>
+<h3>Step 2</h3>
+<p>
+We set the initial paint color in the drawing View class, let's now set the user interface up to reflect and manage that. In the main Activity class, add another instance variable to represent the paint color button in the palette:</p>
+<pre class="brush: java noskimlinks noskimwords">private ImageButton currPaint;</pre>
+<p>
+Inside <code>onCreate</code>, we now want to retrieve the first paint color button in the palette area, which is initially going to be selected. First retrieve the Linear Layout it is contained within:</p>
+<pre class="brush: java noskimlinks noskimwords">LinearLayout paintLayout = (LinearLayout)findViewById(R.id.paint_colors);</pre>
+<p>
+Get the first button and store it as the instance variable:</p>
+<pre class="brush: java noskimlinks noskimwords">currPaint = (ImageButton)paintLayout.getChildAt(0);</pre>
+<p>
+We will use a different drawable image on the button to show that it is currently selected:</p>
+<pre class="brush: java noskimlinks noskimwords">currPaint.setImageDrawable(getResources().getDrawable(R.drawable.paint_pressed));</pre>
+<p>
+Add this file to your app's drawables now, giving it the name "paint_pressed.xml" and entering the following shape:</p>
+<pre class="brush: xml noskimlinks noskimwords">&lt;layer-list xmlns:android="http://schemas.android.com/apk/res/android" &gt;
+	&lt;item&gt;
+		&lt;shape android:shape="rectangle" &gt;
+			&lt;stroke
+				android:width="4dp"
+				android:color="#FF333333" /&gt;
+
+			&lt;solid android:color="#00000000" /&gt;
+
+			&lt;padding
+				android:bottom="0dp"
+				android:left="0dp"
+				android:right="0dp"
+				android:top="0dp" /&gt;
+		&lt;/shape&gt;
+	&lt;/item&gt;
+	&lt;item&gt;
+		&lt;shape xmlns:android="http://schemas.android.com/apk/res/android" &gt;
+			&lt;stroke
+				android:width="4dp"
+				android:color="#FF333333" /&gt;
+
+			&lt;solid android:color="#00000000" /&gt;
+
+			&lt;corners android:radius="10dp" /&gt;
+		&lt;/shape&gt;
+	&lt;/item&gt;
+&lt;/layer-list&gt;</pre>
+<p>
+This is very similar to the "paint.xml" drawable we created last time, but with a darker color around the paint.</p>
+<h3>Step 3</h3>
+<p>
+Now we can let the user choose colors. When we created the layout last time, we listed an <code>onClick</code> attribute for the color palette buttons - add the method to your main Activity class now:</p>
+<pre class="brush: java noskimlinks noskimwords">public void paintClicked(View view){
+	//use chosen color
+}</pre>
+<p>
+Inside this method, first check that the user has clicked a paint color that is not the currently selected one:</p>
+<pre class="brush: java noskimlinks noskimwords">if(view!=currPaint){
+//update color
+}</pre>
+<p>
+Inside the <code>if</code> block, retrieve the tag we set for each button in the layout, representing the chosen color:</p>
+<pre class="brush: java noskimlinks noskimwords">ImageButton imgView = (ImageButton)view;
+String color = view.getTag().toString();</pre>
+<p>
+We need to use the custom View class to set the color. Move to the <code>DrawingView</code> class now and add the following method:</p>
+<pre class="brush: java noskimlinks noskimwords">public void setColor(String newColor){
+//set color		
+}</pre>
+<p>
+Inside the method, start by invalidating the View:</p>
+<pre class="brush: java noskimlinks noskimwords">invalidate();</pre>
+<p>
+Next parse and set the color for drawing:</p>
+<pre class="brush: java noskimlinks noskimwords">paintColor = Color.parseColor(newColor);
+drawPaint.setColor(paintColor);</pre>
+<p>
+Back in your main Activity, in the <code>paintClicked</code> method after retrieving the color tag, call the new method on the custom drawing View object:</p>
+<pre class="brush: java noskimlinks noskimwords">drawView.setColor(color);</pre>
+<p>
+Now update the UI to reflect the new chosen paint and set the previous one back to normal:</p>
+<pre class="brush: java noskimlinks noskimwords">imgView.setImageDrawable(getResources().getDrawable(R.drawable.paint_pressed));
+currPaint.setImageDrawable(getResources().getDrawable(R.drawable.paint));
+currPaint=(ImageButton)view;</pre>
+<figure class="tutorial_image">
+<img src="images/dibujando.png" alt="Drawing Class and Layout"><br>
+</figure>
+<hr>
+
+<h1 style="color: blue; font-size: 40px;">Essencial functionality</h1>
+
+<h2>
+<span>1.</span> Choosing Brush Sizes</h2>
+<h3>Step 1</h3>
+<p>
+Last time we implemented drawing on the canvas, now we can let the user choose a brush size. The brush size options will appear when the user presses the brush button we added to the interface. To respond to this, extend the opening line of your main Activity class declaration to implement the <em>OnClickListener</em> interface:</p>
+<pre class="brush: java noskimlinks noskimwords">
+public class MainActivity extends Activity implements OnClickListener</pre>
+<p>
+You will need the following import statements added to the class for this tutorial:</p>
+<pre class="brush: java noskimlinks noskimwords">
+import java.util.UUID;
+import android.provider.MediaStore;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.view.View.OnClickListener;
+import android.widget.Toast;</pre>
+<p>
+Add the following instance variables to the class to store the three dimension values we defined last time:</p>
+<pre class="brush: java noskimlinks noskimwords">
+private float smallBrush, mediumBrush, largeBrush;</pre>
+<p>
+Instantiate them in <em>onCreate</em>:</p>
+<pre class="brush: java noskimlinks noskimwords">
+smallBrush = getResources().getInteger(R.integer.small_size);
+mediumBrush = getResources().getInteger(R.integer.medium_size);
+largeBrush = getResources().getInteger(R.integer.large_size);</pre>
+<p>
+We will use these later. You should already have an <em>ImageButton</em> instance variable in the main class named "currPaint" - extend that line to add another now for the drawing button:</p>
+<pre class="brush: java noskimlinks noskimwords">
+private ImageButton currPaint, drawBtn;</pre>
+<p>
+In <em>onCreate</em> retrieve a reference to the button from the layout:</p>
+<pre class="brush: java noskimlinks noskimwords">
+drawBtn = (ImageButton)findViewById(R.id.draw_btn);</pre>
+<p>
+Set the class up as a click listener for the button:</p>
+<pre class="brush: java noskimlinks noskimwords">
+drawBtn.setOnClickListener(this);</pre>
+<h3>Step 2</h3>
+<p>
+Add an <em>onClick</em> method to the class:</p>
+<pre class="brush: java noskimlinks noskimwords">
+@Override
+public void onClick(View view){
+//respond to clicks		
+}</pre>
+<p>
+Inside the method, check for clicks on the drawing button:</p>
+<pre class="brush: java noskimlinks noskimwords">
+if(view.getId()==R.id.draw_btn){
+	//draw button clicked
+}</pre>
+<p>
+We will be adding conditional blocks to the <em>onClick</em> method for the other buttons later.</p>
+<h3>Step 3</h3>
+<p>
+When the user clicks the button, we will display a dialog presenting them with the three button sizes. Inside the <em>if</em> block, create a Dialog and set the title:</p>
+<pre class="brush: java noskimlinks noskimwords">
+final Dialog brushDialog = new Dialog(this);
+brushDialog.setTitle("Brush size:");</pre>
+<p>
+Let's define the Dialog layout in XML - add a new file in your app's "res/layout" folder, naming it "brush_chooser.xml" and entering the following outline:</p>
+<pre class="brush: xml noskimlinks noskimwords">
+&lt;LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:gravity="center"
+	android:orientation="vertical" &gt;
+
+&lt;/LinearLayout&gt;</pre>
+<p>
+Inside the Linear Layout, add a button for each size:</p>
+<pre class="brush: xml noskimlinks noskimwords">
+&lt;ImageButton
+	android:id="@+id/small_brush"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:layout_weight="1"
+	android:contentDescription="@string/sml"
+	android:src="@drawable/small" /&gt;
+
+&lt;ImageButton
+	android:id="@+id/medium_brush"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:layout_weight="1"
+	android:contentDescription="@string/med"
+	android:src="@drawable/medium" /&gt;
+
+&lt;ImageButton
+	android:id="@+id/large_brush"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:layout_weight="1"
+	android:contentDescription="@string/lrg"
+	android:src="@drawable/large" /&gt;</pre>
+<p>
+Each button has an ID for identification in the Activity Java code. You will notice that each one also has a content description attribute - add the specified strings to your "res/values" strings XML file:</p>
+<pre class="brush: xml noskimlinks noskimwords">
+&lt;string name="sml"&gt;Small&lt;/string&gt;
+&lt;string name="med"&gt;Medium&lt;/string&gt;
+&lt;string name="lrg"&gt;Large&lt;/string&gt;</pre>
+<p>
+As you can see in the layout file, each button also has a drawable file listed as its source attribute. Create new files for each of these in your "res/drawables" folder(s) now, starting with "small.xml" and entering the following content:</p>
+<pre class="brush: xml noskimlinks noskimwords">
+&lt;shape xmlns:android="http://schemas.android.com/apk/res/android"
+	android:dither="true"
+	android:shape="oval" &gt;
+
+	&lt;size
+		android:height="@dimen/small_brush"
+		android:width="@dimen/small_brush" /&gt;
+
+	&lt;solid android:color="#FF666666" /&gt;
+
+&lt;/shape&gt;</pre>
+<p>
+Notice that we use the dimension values we defined. Next add "medium.xml" to the drawables folder, entering the following shape:</p>
+<pre class="brush: xml noskimlinks noskimwords">
+&lt;shape xmlns:android="http://schemas.android.com/apk/res/android"
+	android:dither="true"
+	android:shape="oval" &gt;
+
+	&lt;size
+		android:height="@dimen/medium_brush"
+		android:width="@dimen/medium_brush" /&gt;
+
+	&lt;solid android:color="#FF666666" /&gt;
+
+&lt;/shape&gt;</pre>
+<p>
+Finally add "large.xml" with the following content:</p>
+<pre class="brush: xml noskimlinks noskimwords">
+&lt;shape xmlns:android="http://schemas.android.com/apk/res/android"
+	android:dither="true"
+	android:shape="oval" &gt;
+
+	&lt;size
+		android:height="@dimen/large_brush"
+		android:width="@dimen/large_brush" /&gt;
+
+	&lt;solid android:color="#FF666666" /&gt;
+
+&lt;/shape&gt;</pre>
+<p>
+Back in your main Activity class <em>onClick</em> method, after creating the Dialog and setting its title, you can now set the layout:</p>
+<pre class="brush: java noskimlinks noskimwords">
+brushDialog.setContentView(R.layout.brush_chooser);</pre>
+<h3>Step 4</h3>
+<p>
+Before we continue with the Dialog, let's alter the custom drawing View class to use different brush sizes. In your <em>DrawingView</em> class, add the following import statements for this tutorial:</p>
+<pre class="brush: java noskimlinks noskimwords">
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.util.TypedValue;</pre>
+<p>
+Add two instance variables to the class:</p>
+<pre class="brush: java noskimlinks noskimwords">
+private float brushSize, lastBrushSize;</pre>
+<p>
+We will use the first variable for the brush size and the second to keep track of the last brush size used when the user switches to the eraser, so that we can revert back to the correct size when they decide to switch back to drawing. In the <em>setupDrawing</em> method, before the code already in there, add the following to instantiate these variables:</p>
+<pre class="brush: java noskimlinks noskimwords">
+brushSize = getResources().getInteger(R.integer.medium_size);
+lastBrushSize = brushSize;</pre>
+<p>
+We use the dimension value for the medium sized brush to begin with. You can now update the line in the method where you set the stroke width with a hard-coded value to use this variable value instead:</p>
+<pre class="brush: java noskimlinks noskimwords">
+drawPaint.setStrokeWidth(brushSize);</pre>
+<p>
+Add the following method to the class to set the brush size:</p>
+<pre class="brush: java noskimlinks noskimwords">
+public void setBrushSize(float newSize){
+//update size
+}</pre>
+<p>
+Inside the method, update the brush size with the passed value:</p>
+<pre class="brush: java noskimlinks noskimwords">
+float pixelAmount = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 
+	newSize, getResources().getDisplayMetrics());
+brushSize=pixelAmount;
+drawPaint.setStrokeWidth(brushSize);</pre>
+<p>
+We will be passing the value from the dimensions file when we call this method, so we have to calculate its dimension value. We update the variable and the Paint object to use the new size. Now add methods to get and set the other size variable we created:</p>
+<pre class="brush: java noskimlinks noskimwords">
+public void setLastBrushSize(float lastSize){
+	lastBrushSize=lastSize;
+}
+public float getLastBrushSize(){
+	return lastBrushSize;
+}</pre>
+<p>
+We will call these methods from the main Activity class.</p>
+<h3>Step 5</h3>
+<p>
+Back in your main Activity class, let's complete the Dialog code in the <em>onClick</em> method. After setting the content view on the Dialog object, listen for clicks on the three size buttons, starting with the small one:</p>
+<pre class="brush: java noskimlinks noskimwords">
+ImageButton smallBtn = (ImageButton)brushDialog.findViewById(R.id.small_brush);
+smallBtn.setOnClickListener(new OnClickListener(){
+	@Override
+	public void onClick(View v) {
+		drawView.setBrushSize(smallBrush);
+		drawView.setLastBrushSize(smallBrush);
+		brushDialog.dismiss();
+	}
+});</pre>
+<p>
+We set the size using the methods we added to the custom View class as soon as the user clicks a brush size button, then immediately dismiss the Dialog. Next do the same for the medium and large buttons:</p>
+<pre class="brush: java noskimlinks noskimwords">
+ImageButton mediumBtn = (ImageButton)brushDialog.findViewById(R.id.medium_brush);
+mediumBtn.setOnClickListener(new OnClickListener(){
+	@Override
+	public void onClick(View v) {
+		drawView.setBrushSize(mediumBrush);
+		drawView.setLastBrushSize(mediumBrush);
+		brushDialog.dismiss();
+	}
+});
+
+ImageButton largeBtn = (ImageButton)brushDialog.findViewById(R.id.large_brush);
+largeBtn.setOnClickListener(new OnClickListener(){
+	@Override
+	public void onClick(View v) {
+		drawView.setBrushSize(largeBrush);
+		drawView.setLastBrushSize(largeBrush);
+		brushDialog.dismiss();
+	}
+});</pre>
+<p>
+Complete the draw button section of <em>onClick</em> by displaying the Dialog:</p>
+<pre class="brush: java noskimlinks noskimwords">
+brushDialog.show();</pre>
+<p>
+The Dialog will display until the user makes a selection or goes back to the Activity.</p>
+<figure class="tutorial_image">
+<img src="images/brush_sizes.png" alt="Brush Dialog"><br>
+</figure>
+<h3>Step 6</h3>
+<p>
+Use the new method to set the initial brush size in <em>onCreate</em>:</p>
+<pre class="brush: java noskimlinks noskimwords">
+drawView.setBrushSize(mediumBrush);</pre>
+<hr>
+<h2>
+<span>2.</span> Erasing</h2>
+<h3>Step 1</h3>
+<p>
+Now let's add erasing to the app. In the custom drawing View class, add a boolean instance variable to act as a flag for whether the user is currently erasing or not:</p>
+<pre class="brush: java noskimlinks noskimwords">
+private boolean erase=false;</pre>
+<p>
+Initially we will assume that the user is drawing, not erasing. Add the following method to the class:</p>
+<pre class="brush: java noskimlinks noskimwords">
+public void setErase(boolean isErase){
+//set erase true or false		
+}</pre>
+<p>
+Inside the method, first update the flag variable:</p>
+<pre class="brush: java noskimlinks noskimwords">
+erase=isErase;</pre>
+<p>
+Now alter the Paint object to erase or switch back to drawing:</p>
+<pre class="brush: java noskimlinks noskimwords">
+if(erase) drawPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+else drawPaint.setXfermode(null);</pre>
+<p>
+If you're looking for an advanced topic to explore, have a look at the <a href="http://developer.android.com/reference/android/graphics/PorterDuff.Mode.html"><em>PorterDuff.Mode</em> options</a>.</p>
+<h3>Step 2</h3>
+<p>
+Back in the main Activity class, add another <em>ImageButton</em> to the list of instance variables:</p>
+<pre class="brush: java noskimlinks noskimwords">
+private ImageButton currPaint, drawBtn, eraseBtn;</pre>
+<p>
+In <em>onCreate</em>, retrieve a reference to the button and set the class up to listen for clicks:</p>
+<pre class="brush: java noskimlinks noskimwords">
+eraseBtn = (ImageButton)findViewById(R.id.erase_btn);
+eraseBtn.setOnClickListener(this);</pre>
+<p>
+Add a conditional statement for the button in <em>onClick</em> after the conditional for the draw button:</p>
+<pre class="brush: java noskimlinks noskimwords">
+else if(view.getId()==R.id.erase_btn){
+	//switch to erase - choose size
+}</pre>
+<p>
+As with the draw button, we will let the user choose an eraser size from a Dialog. Inside the conditional block for the erase button, create and prepare the Dialog as before:</p>
+<pre class="brush: java noskimlinks noskimwords">
+final Dialog brushDialog = new Dialog(this);
+brushDialog.setTitle("Eraser size:");
+brushDialog.setContentView(R.layout.brush_chooser);</pre>
+<p>
+We use the same layout as the draw button Dialog. Setup click listeners for the size buttons as before, this time calling the new erase method we added to the View class:</p>
+<pre class="brush: java noskimlinks noskimwords">
+ImageButton smallBtn = (ImageButton)brushDialog.findViewById(R.id.small_brush);
+smallBtn.setOnClickListener(new OnClickListener(){
+	@Override
+	public void onClick(View v) {
+		drawView.setErase(true);
+		drawView.setBrushSize(smallBrush);
+		brushDialog.dismiss();
+	}
+});
+ImageButton mediumBtn = (ImageButton)brushDialog.findViewById(R.id.medium_brush);
+mediumBtn.setOnClickListener(new OnClickListener(){
+	@Override
+	public void onClick(View v) {
+		drawView.setErase(true);
+		drawView.setBrushSize(mediumBrush);
+		brushDialog.dismiss();
+	}
+});
+ImageButton largeBtn = (ImageButton)brushDialog.findViewById(R.id.large_brush);
+largeBtn.setOnClickListener(new OnClickListener(){
+	@Override
+	public void onClick(View v) {
+		drawView.setErase(true);
+		drawView.setBrushSize(largeBrush);
+		brushDialog.dismiss();
+	}
+});</pre>
+<p>
+We call the method to set the brush size as with the draw button, this time first setting the erase flag to true. Finally, display the Dialog:</p>
+<pre class="brush: java noskimlinks noskimwords">
+brushDialog.show();</pre>
+<figure class="tutorial_image">
+<img src="images/brush_sizes.png" alt="Erase Dialog"><br>
+</figure>
+<p>
+The user will be able to erase using touch interaction as with drawing:</p>
+<figure class="tutorial_image">
+<img src="images/borrando.png" alt="Drawing Erased"><br>
+</figure>
+<h3>Step 3</h3>
+<p>
+When the user clicks the draw button and chooses a brush size, we need to set back to drawing in case they have previously been erasing. In the three click listeners you added for the small, medium and large buttons in the draw button section of <em>onClick</em>, call the erase method with a false parameter - add this in each <em>onClick</em> before calling dismiss on the "brushDialog" object:</p>
+<pre class="brush: java noskimlinks noskimwords">
+drawView.setErase(false);</pre>
+<p>
+When the user has been erasing and clicks a paint color button, we will assume that they want to switch back to drawing. In the <em>paintClicked</em> method, before the existing code, call the erase method, passing false:</p>
+<pre class="brush: java noskimlinks noskimwords">
+drawView.setErase(false);</pre>
+<p>
+Still inside <em>paintClicked</em>, set the brush size back to the last one used when drawing rather than erasing:</p>
+<pre class="brush: java noskimlinks noskimwords">
+drawView.setBrushSize(drawView.getLastBrushSize());</pre>
+<p>
+This type of processing is motivated by assumptions about what the user wants to do based on their actions - you could potentially enhance this app along these lines, so bear that in mind if you want to carry on working on the app later.</p>
+<hr>
+<h2>
+<span>3.</span> New Drawings</h2>
+<h3>Step 1</h3>
+<p>
+We added a button for the user to start a new drawing, so let's implement that now. Add another to the list of <em>ImageButton</em> instance variables in your main Activity class:</p>
+<pre class="brush: java noskimlinks noskimwords">
+private ImageButton currPaint, drawBtn, eraseBtn, newBtn;</pre>
+<p>
+Instantiate it with a reference to the button listed in the layout, in <em>onCreate</em>, also listening for clicks:</p>
+<pre class="brush: java noskimlinks noskimwords">
+newBtn = (ImageButton)findViewById(R.id.new_btn);
+newBtn.setOnClickListener(this);</pre>
+<h3>Step 2</h3>
+<p>
+In <em>onClick</em>, add another conditional block for the new button:</p>
+<pre class="brush: java noskimlinks noskimwords">
+else if(view.getId()==R.id.new_btn){
+	//new button
+}</pre>
+<p>
+In your custom drawing View class, add a method to start a new drawing:</p>
+<pre class="brush: java noskimlinks noskimwords">
+public void startNew(){
+	drawCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
+	invalidate();
+}</pre>
+<p>
+The method simply clears the canvas and updates the display.</p>
+<p>
+Back in the main Activity class conditional block for the new button in <em>onCreate</em>, let's verify that the user definitely wants to start a new drawing:</p>
+<pre class="brush: java noskimlinks noskimwords">
+AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
+newDialog.setTitle("New drawing");
+newDialog.setMessage("Start new drawing (you will lose the current drawing)?");
+newDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener(){
+	public void onClick(DialogInterface dialog, int which){
+		drawView.startNew();
+		dialog.dismiss();
+	}
+});
+newDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+	public void onClick(DialogInterface dialog, int which){
+		dialog.cancel();
+	}
+});
+newDialog.show();</pre>
+<p>
+The Dialog lets the user change their mind, calling the new method if they decide to go ahead and start a new drawing, in which case the current drawing is cleared.</p>
+<figure class="tutorial_image">
+<img src="images/nuevo_dibujo.png" alt="New Drawing"><br>
+</figure>
+<hr>
+<h2>
+<span>4.</span> Save Drawings</h2>
+<h3>Step 1</h3>
+<p>
+The one remaining part of the app functionality is the ability to save drawings to the device. Add the save button as the last in the sequence of <em>ImageButton</em> instance variables in the main Activity class:</p>
+<pre class="brush: java noskimlinks noskimwords">
+private ImageButton currPaint, drawBtn, eraseBtn, newBtn, saveBtn;</pre>
+<p>
+Instantiate it and listen for clicks in <em>onCreate</em>:</p>
+<pre class="brush: java noskimlinks noskimwords">
+saveBtn = (ImageButton)findViewById(R.id.save_btn);
+saveBtn.setOnClickListener(this);</pre>
+<p>
+Add a conditional for it in <em>onClick</em>:</p>
+<pre class="brush: java noskimlinks noskimwords">
+else if(view.getId()==R.id.save_btn){
+			//save drawing
+}</pre>
+<p>
+Let's use a similar algorithm to the one we used for creating new drawings, to check that the user wants to go ahead and save:</p>
+<pre class="brush: java noskimlinks noskimwords">
+AlertDialog.Builder saveDialog = new AlertDialog.Builder(this);
+saveDialog.setTitle("Save drawing");
+saveDialog.setMessage("Save drawing to device Gallery?");
+saveDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener(){
+	public void onClick(DialogInterface dialog, int which){
+		//save drawing
+	}
+});
+saveDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+	public void onClick(DialogInterface dialog, int which){
+		dialog.cancel();
+	}
+});
+saveDialog.show();</pre>
+<figure class="tutorial_image">
+<img src="images/guardando_dibujo.png" alt="Save Dialog"><br>
+</figure>
+<p>
+If the user chooses to go ahead and save, we need to output the currently displayed View as an image. In the <em>onClick</em> method for the save Dialog, start by enabling the drawing cache on the custom View:</p>
+<pre class="brush: java noskimlinks noskimwords">
+drawView.setDrawingCacheEnabled(true);</pre>
+<p>
+Now attempt to write the image to a file:</p>
+<pre class="brush: java noskimlinks noskimwords">
+String imgSaved = MediaStore.Images.Media.insertImage(
+	getContentResolver(), drawView.getDrawingCache(),
+	UUID.randomUUID().toString()+".png", "drawing");</pre>
+<p>
+Take a moment to look over this code. We use the <em>insertImage</em> method to attempt to write the image to the media store for images on the device, which should save it to the user gallery. We pass the content resolver, drawing cache for the displayed View, a randomly generated UUID string for the filename with PNG extension and a short description. The method returns the URL of the image created, or null if the operation was unsuccessful - this lets us give user feedback:</p>
+<pre class="brush: java noskimlinks noskimwords">
+if(imgSaved!=null){
+	Toast savedToast = Toast.makeText(getApplicationContext(), 
+		"Drawing saved to Gallery!", Toast.LENGTH_SHORT);
+	savedToast.show();
+}
+else{
+	Toast unsavedToast = Toast.makeText(getApplicationContext(), 
+		"Oops! Image could not be saved.", Toast.LENGTH_SHORT);
+	unsavedToast.show();
+}</pre>
+<p>
+Destroy the drawing cache so that any future drawings saved won't use the existing cache:</p>
+<pre class="brush: java noskimlinks noskimwords">
+drawView.destroyDrawingCache();</pre>
+<p>
+Finally, add the following permission to your project manifest file:</p>
+<pre class="brush: xml noskimlinks noskimwords">
+&lt;uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /&gt;</pre>
+<figure class="tutorial_image">
+<img src="images/guardado_exitoso.png" alt="Drawing Saved"><br>
+</figure>
+<p>
+On browsing to the device gallery, the user should now be able to see their drawing image:</p>
+<figure class="tutorial_image">
+<img src="images/dibujo_en_galeria.png" alt="Drawing In Gallery"><br>
+</figure>
+<h2>Conclution</h2>
+<p>
+Finally we have a app Paint ready to work.
+</p>
         </article>
       </div>
     </div>
